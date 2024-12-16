@@ -5,8 +5,10 @@ def menu():
     print("\nВыберите ряд для вычисления:"
     "\n1. Ряд для косинуса (cos(x))"
     "\n2. Ряд для арктангенса (arctan(x))"
+    "\n3. Биномиальное разложение (1 + x)^m"
     "\n4. Выход"
           )
+
 
 
 def cos_series(x, terms=10):
@@ -67,6 +69,43 @@ def arctan_series(x, terms=10):
     return result
 
 
+def binomial_series(x, m, terms=10):
+    """
+    Вычисляет биномиальное разложение для заданного значения x и параметра m.
+
+    Подробное описание:
+    Функция вычисляет биномиальное разложение (многочлен) для заданного значения x с использованием
+    первых `terms` членов разложения. Разложение основано на формуле (a + b)^m, где a = x и b = 1.
+
+    Аргументы:
+    x (float): Значение, для которого вычисляется биномиальное разложение.
+    m (int): Параметр степени, определяющий количество членов разложения.
+    terms (int, optional): Количество членов разложения, по умолчанию равно 10.
+
+    Возвращаемое значение:
+    float: Результат вычисления биномиального разложения.
+
+    Исключения:
+    ValueError: Если m является отрицательным числом.
+
+    Примеры использования:
+    --> binomial_series(2, 3)
+    8.0
+    --> binomial_series(1, 5, terms=6)
+    6.0
+    --> binomial_series(0.5, 4)
+    0.6875
+    """
+    if m < 0:
+        raise ValueError("Параметр m должен быть неотрицательным.")
+
+    result = 0
+    for n in range(terms):
+        coefficient = math.prod([m - k for k in range(n)]) / math.factorial(n) if n > 0 else 1
+        result += coefficient * (x ** n)
+    return result
+
+
 def main():
     while True:
         menu()
@@ -82,19 +121,32 @@ def main():
 
         elif choice == "2":
             try:
-                x = float(input("Введите значение x для arctan(x): "))
-                terms = int(input("Введите количество членов для приближенного вычисления: "))
-                print(f"arctan({x}) ≈ {arctan_series(x, terms)}")
+                x = float(input("Введите значение x для arctan(x), где -1 <= x <= 1 : "))
+                if -1 <= x <= 1:
+                    terms = int(input("Введите количество членов для приближенного вычисления: "))
+                    print(f"arctan({x}) ≈ {arctan_series(x, terms)}")
+                else:
+                    print("x должен быть от -1 до 1 включительно")
             except ValueError:
                 print("Введите корректные данные!")
 
+        elif choice == "3":
+            try:
+                x = float(input("Введите значение x для (1 + x)^m, где -1 < x < 1: "))
+                if -1 < x < 1:
+                    m = float(input("Введите значение m: "))
+                    terms = int(input("Введите количество членов для приближенного вычисления: "))
+                    print(f"(1 + {x})^{m} ≈ {binomial_series(x, m, terms)}")
+                else:
+                    print("x должен быть от -1 до 1 не включительно")
+            except ValueError:
+                print("Введите корректные данные!")
 
         elif choice == "4":
             print("Выход из программы.")
             break
         else:
             print("Некорректный ввод. Пожалуйста, выберите правильный вариант.")
-
 
 
 if __name__ == "__main__":
